@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Review Post - Tech2xplore</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+		
+        body {
+             background-color: #1e1f23; ;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .post-container {
+            max-width: 700px;
+            margin: 50px auto;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            box-shadow: 0 1px 6px rgba(11, 193, 249, 0.9);
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        .post-body-div {
+            display: flex;
+            flex-direction: column;
+            margin-top: 15px;
+        }
+
+        /* Image styling - Full width image */
+        .bdp-post-image img {
+            width: 100%; /* Make the image span the entire width of the container */
+            height: auto; /* Maintain aspect ratio */
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 1px 8px rgb(0, 128, 255);
+        }
+
+        /* Category and Title styling - Align them to the left */
+        .bdp_post_content {
+            margin-top: 20px;
+            text-align: left; /* Align category and title to left */
+        }
+
+        .category-link {
+            font-weight: bold;
+            color: #007bff; /* Category color */
+            display: block; /* Make category a block element */
+            margin-bottom: 10px;
+        }
+
+        .post_title {
+            font-size: 1.8em;
+            color: #333;
+            margin-top: 15px;
+            text-align: left; /* Align title to left */
+        }
+
+        .post_content {
+            margin-top: 15px;
+            color: #555;
+            font-size: 16px;
+            text-align: left; /* Align content to left */
+        }
+
+        /* Metadata Box */
+        .metadatabox {
+            display: flex;
+            justify-content: space-between; /* Align username and date on opposite sides */
+            align-items: center;
+            margin-top: 15px;
+            font-size: 16px; /* Increased font size for easier readability */
+            color: #777;
+        }
+
+        .metadatabox span {
+            margin-right: 20px; /* Added spacing between username and date */
+        }
+
+        .metadatabox i {
+            margin-right: 10px;
+            color: #888;
+        }
+
+        /* User Profile Icon */
+        .user-info i {
+            font-size: 18px; /* Set user icon size same as username */
+            color: #007bff; /* Icon color same as category */
+            margin-right: 10px;
+        }
+
+        /* Date Icon */
+        .date-icon {
+            font-size: 18px; /* Set date icon size */
+            color: #007bff; /* Same color as category */
+        }
+
+        /* Username and Date styling */
+        .username, .post-date {
+			color: #007bff;
+            font-size: 18px; /* Set font size for username and date */
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-container .btn {
+            margin-left: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="post-container">
+            <!-- Post Image -->
+            <div class="post-body-div">
+                <div class="bdp-post-image">
+                    <img th:src="'data:' + ${mimeType} + ';base64,' + ${image}" alt="Post Image" />
+                </div>
+
+                <!-- Category -->
+                <div class="bdp_post_content">
+                    <span class="category-link" th:text="'#' + ${post.category.name}"></span>
+                </div>
+
+                <!-- Post Title -->
+                <h2 class="post_title" th:text="${post.title}"></h2>
+
+                <!-- Post Content -->
+                <div class="post_content" th:text="${plainTextBody}"></div>
+            </div>
+
+            <!-- Metadata Box: Profile Info & Date -->
+            <div class="metadatabox">
+                <div class="user-info">
+                    <!-- User Profile Icon -->
+                    <i class="bi bi-person-circle"></i>
+                    <span class="username" th:text="${loggedInUser.username}"></span>
+                </div>
+                <span class="post-date">
+                    <i class="bi bi-calendar-date date-icon"></i>
+                    <span th:text="${#dates.format(T(java.sql.Timestamp).valueOf(post.createdAt), 'dd MMM yyyy HH:mm')}"></span>
+                </span>
+            </div>
+
+            <!-- Buttons for Confirming or Cancelling the Post -->
+            <div class="btn-container">
+                <form th:action="@{/confirmPost}" method="post">
+                    <input type="hidden" name="title" th:value="${post.title}"/>
+                    <input type="hidden" name="categoryId" th:value="${post.category.id}"/>
+                    <input type="hidden" name="visibility" th:value="${post.visibility}"/>
+                    <input type="hidden" name="body" th:value="${post.body}"/>
+                    <input type="hidden" name="image" th:value="${post.image}"/>
+                    <button type="submit" class="btn btn-success">Confirm</button>
+                </form>
+                <a href="/createPost" class="btn btn-danger">Cancel</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
